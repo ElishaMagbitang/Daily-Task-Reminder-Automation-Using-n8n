@@ -1,0 +1,122 @@
+{
+  "name": "Daily-Task-Reminder-Automation-with-n8n",
+  "nodes": [
+    {
+      "parameters": {
+        "unit": "minutes"
+      },
+      "id": "3f970829-e382-4da3-bfb1-13ffa08b974e",
+      "name": "Interval Trigger",
+      "type": "n8n-nodes-base.interval",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "sheetId": "1rmkItFRGWjEYio4feXBI6DB81g5QirDMGnBRzX0Rv94",
+        "range": "A:C",
+        "options": {}
+      },
+      "id": "bd911ab9-77df-44af-88b9-cb7033cb7e53",
+      "name": "Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 2,
+      "position": [
+        -64,
+        176
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YseLv4YKtIXuh5iV",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "return [{\n  json: {\n    emailBody: items.map(task => `• ${task.json.Task} (Status: ${task.json.Status}, Due: ${task.json['Due Date']})`).join(\"\\n\")\n  }\n}];"
+      },
+      "id": "e8e8cfc5-4c4e-41c7-93de-e7876bd9d9b1",
+      "name": "Format Tasks",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        192,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "magbitangelishajhoyce@gmail.com",
+        "subject": "Task for the DAY!",
+        "message": "=Hi! Here are your tasks for the day:\n\n{{$json[\"emailBody\"]}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        432,
+        176
+      ],
+      "id": "99677399-3b2b-4760-8d93-90ba22cf0172",
+      "name": "Send a message",
+      "webhookId": "9f677311-0ba3-4ffb-b6d3-f1bfa4b438c5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "v9MQHvPvsJnhZHAB",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Interval Trigger": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Format Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Tasks": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fb105f67-6223-4332-9c6c-f0cd4de614db",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "51a755c9d69b7a698c96a3fad86a45ee2f7b35767bc50c1941877495e65fd572"
+  },
+  "id": "EyjgnkFTSK5PiMNI",
+  "tags": []
+}
